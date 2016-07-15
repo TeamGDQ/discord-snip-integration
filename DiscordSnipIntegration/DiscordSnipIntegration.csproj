@@ -1,0 +1,291 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{9E466D40-0B9C-4DCF-AF59-9E7F012F1FED}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>DiscordSnipIntegration</RootNamespace>
+    <AssemblyName>DiscordSnipIntegration</AssemblyName>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Discord.Net, Version=0.9.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Discord.Net.0.9.4\lib\net45\Discord.Net.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Discord.Net.Commands, Version=0.9.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Discord.Net.Commands.0.9.4\lib\net45\Discord.Net.Commands.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Discord.Net.Modules, Version=0.9.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Discord.Net.Modules.0.9.4\lib\net45\Discord.Net.Modules.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.0.0\lib\net45\EntityFramework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.0.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Nito.AsyncEx, Version=3.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Nito.AsyncEx.3.0.1\lib\net45\Nito.AsyncEx.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Nito.AsyncEx.Concurrent, Version=3.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Nito.AsyncEx.3.0.1\lib\net45\Nito.AsyncEx.Concurrent.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Nito.AsyncEx.Enlightenment, Version=3.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Nito.AsyncEx.3.0.1\lib\net45\Nito.AsyncEx.Enlightenment.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="RestSharp, Version=105.2.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\RestSharp.105.2.3\lib\net46\RestSharp.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.SQLite, Version=1.0.102.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Data.SQLite.Core.1.0.102.0\lib\net46\System.Data.SQLite.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Data.SQLite.EF6, Version=1.0.102.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Data.SQLite.EF6.1.0.102.0\lib\net46\System.Data.SQLite.EF6.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Data.SQLite.Linq, Version=1.0.102.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Data.SQLite.Linq.1.0.102.0\lib\net46\System.Data.SQLite.Linq.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.Text.Encodings.Web, Version=4.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Text.Encodings.Web.4.0.0\lib\netstandard1.0\System.Text.Encodings.Web.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+    <Reference Include="WebSocket4Net, Version=0.14.1.0, Culture=neutral, PublicKeyToken=eb4e154b696bf72a, processorArchitecture=MSIL">
+      <HintPath>..\packages\WebSocket4Net.0.14.1\lib\net45\WebSocket4Net.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="DSI.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>DSI.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Eula.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Eula.Designer.cs">
+      <DependentUpon>Eula.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Global.cs" />
+    <Compile Include="Locale.cs" />
+    <Compile Include="Properties\Resources1.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Snip\AssemblyInformation.cs" />
+    <Compile Include="Snip\CheckVersion.cs" />
+    <Compile Include="Snip\Globals.cs" />
+    <Compile Include="Snip\GlobalSuppressions.cs" />
+    <Compile Include="Snip\KeyboardHook.cs" />
+    <Compile Include="Snip\MediaPlayer.cs" />
+    <Compile Include="Snip\OutputFormat.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Snip\OutputFormat.Designer.cs" />
+    <Compile Include="Snip\Players\foobar2000.cs" />
+    <Compile Include="Snip\Players\iTunes.cs" />
+    <Compile Include="Snip\Players\Spotify.cs" />
+    <Compile Include="Snip\Players\VLC.cs" />
+    <Compile Include="Snip\Players\Winamp.cs" />
+    <Compile Include="Snip\Program.cs" />
+    <Compile Include="Snip\Settings.cs" />
+    <Compile Include="Snip\SimpleJson.cs" />
+    <Compile Include="Snip\Snip.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Snip\Snip.Designer.cs" />
+    <Compile Include="Snip\TextHandler.cs" />
+    <Compile Include="Snip\UnsafeNativeMethods.cs" />
+    <Compile Include="ToasterVersion.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include=".locale\en-US.locale">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include=".locale\es-MX.locale">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="App.config" />
+    <None Include="packages.config" />
+    <None Include="Properties\app.manifest" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Settings.cs" />
+    <Compile Include="DiscordTokenHelper.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="FodyWeavers.xml" />
+    <Content Include="License.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <None Include="ResgenAllTheThings.cmd" />
+    <Content Include="Resources\gplv3.png" />
+    <None Include="Resources\Icon1.ico" />
+    <Content Include="Resources\Snip.ico" />
+    <Content Include="Resources\Strings.de-AT.txt" />
+    <Content Include="Resources\Strings.de-CH.txt" />
+    <Content Include="Resources\Strings.de-DE.txt" />
+    <Content Include="Resources\Strings.fr-FR.txt" />
+    <Content Include="Resources\Strings.nb-NO.txt" />
+    <Content Include="Resources\Strings.nl-NL.txt" />
+    <Content Include="Resources\Strings.sv-SE.txt" />
+    <Content Include="Resources\Strings.txt" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="DSI.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>DSI.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Eula.resx">
+      <DependentUpon>Eula.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Snip\OutputFormat.resx" />
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources1.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Snip\Snip.resx" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Applications\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <UsingTask TaskName="CosturaCleanup" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll" TaskFactory="CodeTaskFactory">
+    <ParameterGroup>
+      <Config Output="false" Required="true" ParameterType="Microsoft.Build.Framework.ITaskItem" />
+      <Files Output="false" Required="true" ParameterType="Microsoft.Build.Framework.ITaskItem[]" />
+    </ParameterGroup>
+    <Task Evaluate="true">
+      <Reference xmlns="http://schemas.microsoft.com/developer/msbuild/2003" Include="System.Xml" />
+      <Reference xmlns="http://schemas.microsoft.com/developer/msbuild/2003" Include="System.Xml.Linq" />
+      <Using xmlns="http://schemas.microsoft.com/developer/msbuild/2003" Namespace="System" />
+      <Using xmlns="http://schemas.microsoft.com/developer/msbuild/2003" Namespace="System.IO" />
+      <Using xmlns="http://schemas.microsoft.com/developer/msbuild/2003" Namespace="System.Xml.Linq" />
+      <Code xmlns="http://schemas.microsoft.com/developer/msbuild/2003" Type="Fragment" Language="cs"><![CDATA[
+var config = XElement.Load(Config.ItemSpec).Elements("Costura").FirstOrDefault();
+
+if (config == null) return true;
+
+var excludedAssemblies = new List<string>();
+var attribute = config.Attribute("ExcludeAssemblies");
+if (attribute != null)
+    foreach (var item in attribute.Value.Split('|').Select(x => x.Trim()).Where(x => x != string.Empty))
+        excludedAssemblies.Add(item);
+var element = config.Element("ExcludeAssemblies");
+if (element != null)
+    foreach (var item in element.Value.Split(new[] { "\r\n", "\n" }, StringSplitOptions.RemoveEmptyEntries).Select(x => x.Trim()).Where(x => x != string.Empty))
+        excludedAssemblies.Add(item);
+
+var filesToCleanup = Files.Select(f => f.ItemSpec).Where(f => !excludedAssemblies.Contains(Path.GetFileNameWithoutExtension(f), StringComparer.InvariantCultureIgnoreCase));
+
+foreach (var item in filesToCleanup)
+  File.Delete(item);
+]]></Code>
+    </Task>
+  </UsingTask>
+  <Target Name="CleanReferenceCopyLocalPaths" AfterTargets="AfterBuild;NonWinFodyTarget">
+    <CosturaCleanup Config="FodyWeavers.xml" Files="@(ReferenceCopyLocalPaths->'$(OutDir)%(DestinationSubDirectory)%(Filename)%(Extension)')" />
+  </Target>
+  <Import Project="..\packages\System.Data.SQLite.Core.1.0.102.0\build\net46\System.Data.SQLite.Core.targets" Condition="Exists('..\packages\System.Data.SQLite.Core.1.0.102.0\build\net46\System.Data.SQLite.Core.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\System.Data.SQLite.Core.1.0.102.0\build\net46\System.Data.SQLite.Core.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\System.Data.SQLite.Core.1.0.102.0\build\net46\System.Data.SQLite.Core.targets'))" />
+    <Error Condition="!Exists('..\packages\Fody.1.28.3\build\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Fody.1.28.3\build\Fody.targets'))" />
+  </Target>
+  <Import Project="..\packages\Fody.1.28.3\build\Fody.targets" Condition="Exists('..\packages\Fody.1.28.3\build\Fody.targets')" />
+  <PropertyGroup>
+    <PostBuildEvent>"$(ProjectDir)ResgenAllTheThings.cmd" "$(ProjectDir)" "$(TargetDir)"</PostBuildEvent>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

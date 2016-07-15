@@ -1,0 +1,21 @@
+{
+    "Application Description": "Detecta música proveniente de Snip (Snip es requerido). Ésta aplicación soporta lo que Snip soporte.",
+    "Authentication Failure": "Fallo de autenticación",
+    "Cannot find Snip": "No podemos encontrar Snip...",
+    "Connected": "Conectado exitosamente a Guild",
+    "Connecting": "Conectando a Guild",
+    "Current Game Status": "Estado Actual del Juego",
+    "Current State": "Estado Actual",
+    "Current User Status": "Estado Actual del Usuario",
+    "Development Stage": "Este programa se encuentra en sus etapas de desarrollo, si se trata de Alfa, Beta, o desarrollo, por favor espere un montón de errores. Gracias.",
+    "DiscordConnectedEvent": "Ha sido conectado a Discord exitosamente",
+    "Language": "Español (Mexico)",
+    "Missing License": "Licencia falta! Por favor, obtener una licencia de https://www.gnu.org/licenses/gpl-3.0.txt, y lo puso en un archivo llamado License.txt en directorio de la aplicación.",
+    "New Message From": "Mensaje nuevo de",
+    "Now Playing": "Jugando",
+    "Now Streaming": "Transmitiendo",
+    "Press any key to quit": "Presione cualquier tecla para salir.",
+    "Scaring Stage": "Este programa se encuentra en sus etapas de desarrollo, sin embargo, esta versión se considera más estable. Espera menos errores.",
+    "Update Available": "Actualización Disponible",
+    "You are connected as": "Conectado como"
+}
