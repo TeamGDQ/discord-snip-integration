@@ -57,11 +57,11 @@ namespace DiscordSnipIntegration
         [STAThread]
         public static void Main ( string [ ] args )
         {
-            Console.Title = AppFull;
-
+            Console.Title = "";
             LoadCritical ( );
             DisplayHeader ( );
             RunUpdates ( );
+            Console.Title = AppFull;
             threadWorker = new Thread ( new ThreadStart ( new Program ( ).Initiate ) );
             threadWorker.Start ( );
             while ( !quitTriggered )

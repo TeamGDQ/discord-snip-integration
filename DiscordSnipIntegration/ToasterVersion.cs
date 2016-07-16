@@ -27,10 +27,9 @@ namespace DiscordSnipIntegration
     {
         Development = 0x01,
         Alpha = 0x02,
-        Snapshot = 0x04,
-        Scaring = 0x08,
-        Beta = 0x10,
-        Release = 0x20,
+        Scaring = 0x04,
+        Beta = 0x08,
+        Release = 0x10,
     }
 
     public struct ToasterVersion
@@ -73,6 +72,30 @@ namespace DiscordSnipIntegration
             {
                 return new ToasterVersion ( );
             }
+        }
+
+        public static ToasterVersion GetInternalVersion(Repo repo = Repo.Scaring)
+        {
+            int[] ver = About.Version.Split ( '.' ).Where ( ( s ) => IsNumber ( s ) ).Select ( ( s ) => int.Parse ( s ) ).ToArray();
+            
+            return new ToasterVersion
+            {
+                Major = ver[0],
+                Minor = ver[1],
+                Build = ver[2],
+                Revision = ver[3],
+                Repo = repo
+            };
+        }
+
+        private static bool IsNumber ( string x )
+        {
+            foreach ( char c in x )
+            {
+                if ( !char.IsNumber ( c ) )
+                    return false;
+            }
+            return true;
         }
 
         public string CreateUpdateString()

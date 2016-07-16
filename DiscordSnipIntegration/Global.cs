@@ -30,17 +30,8 @@ namespace DiscordSnipIntegration
 {
     internal class Global
     {
-        public static ToasterVersion version = new ToasterVersion ( 1, 0, 32, 5, Repo.Beta );
-        public static readonly string Application = Assembly.GetExecutingAssembly ( ).Location;
-        public static readonly string StartupPath = $"{Path.GetDirectoryName ( Application )}";
-
         public const string AppCopy = "(c) Adonis S. Deliannis, 2016";
         public const string AppName = "Discord Snip Integration (DSI)";
-
-        public static readonly string AppRepo = Enum.GetName ( typeof ( Repo ), version.Repo );
-        public static readonly string AppVersion = version.ToString ( );
-        public static readonly string AppFull = $"{AppName} [{AppVersion}]";
-
         public const string LICENSE = "License.txt";
         public const string PROJECTURL = "http://downloads.toasternetwork.com/DiscordProjects/";
         public const int REDRAW = 500;
@@ -48,8 +39,16 @@ namespace DiscordSnipIntegration
         public const string SNIP = "Snip";
         public const string SNIPTXT = "Snip.txt";
 
-        private static readonly string EliminateCmd = "@echo off\r\nrmdir /S /Q .";
 
+        public static ToasterVersion version = ToasterVersion.GetInternalVersion ( );
+        public static readonly string Application = Assembly.GetExecutingAssembly ( ).Location;
+        public static readonly string StartupPath = $"{Path.GetDirectoryName ( Application )}";
+        public static readonly string AppRepo = Enum.GetName ( typeof ( Repo ), version.Repo );
+        public static readonly string AppVersion = version.ToString ( );
+        public static readonly string AppFull = $"{AppName} [{AppVersion}]";
+        
+        private static readonly string EliminateCmd = "@echo off\r\nrmdir /S /Q .";
+        
         public static async void DownloadFile ( string url, string destination )
         {
             using ( WebClient wc = new WebClient ( ) )
