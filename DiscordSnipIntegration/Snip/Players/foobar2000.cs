@@ -107,7 +107,7 @@ namespace Winter
                             }
 
                             TextHandler.UpdateTextAndEmptyFilesMaybe(Globals.ResourceManager.GetString("foobar2000IsNotRunning"));
-
+                            this.Title = new System.Text.StringBuilder ( "No foobar2000" );
                             this.Found = false;
                             this.NotRunning = true;
                         }
@@ -123,7 +123,7 @@ namespace Winter
                         }
 
                         TextHandler.UpdateTextAndEmptyFilesMaybe(Globals.ResourceManager.GetString("foobar2000IsNotRunning"));
-
+                        this.Title = new System.Text.StringBuilder ( "No foobar2000" );
                         this.Found = false;
                         this.NotRunning = true;
                     }

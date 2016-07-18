@@ -47,6 +47,9 @@ namespace DiscordSnipIntegration
         public static readonly string AppVersion = version.ToString ( );
         public static readonly string AppFull = $"{AppName} [{AppVersion}]";
         
+        public static string CurrentSong => Winter.Globals.CurrentPlayer.LastTitle;
+        internal static string LastSong { get; set; }
+
         private static readonly string EliminateCmd = "@echo off\r\nrmdir /S /Q .";
         
         public static async void DownloadFile ( string url, string destination )

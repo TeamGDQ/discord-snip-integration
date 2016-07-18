@@ -95,7 +95,6 @@ namespace Winter
                             }
 
                             TextHandler.UpdateTextAndEmptyFilesMaybe(Globals.ResourceManager.GetString("WinampIsNotRunning"));
-
                             this.Found = false;
                             this.NotRunning = true;
                         }
@@ -111,7 +110,6 @@ namespace Winter
                         }
 
                         TextHandler.UpdateTextAndEmptyFilesMaybe(Globals.ResourceManager.GetString("WinampIsNotRunning"));
-
                         this.Found = false;
                         this.NotRunning = true;
                     }

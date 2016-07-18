@@ -26,15 +26,15 @@ namespace Winter
 
     internal sealed class VLC : MediaPlayer
     {
-        public override void Update()
+        public override void Update ( )
         {
-            Process[] processes = Process.GetProcessesByName("vlc");
+            Process [ ] processes = Process.GetProcessesByName ( "vlc" );
 
-            if (processes.Length > 0)
+            if ( processes.Length > 0 )
             {
                 string vlcTitle = string.Empty;
 
-                foreach (Process process in processes)
+                foreach ( Process process in processes )
                 {
                     vlcTitle = process.MainWindowTitle;
                 }
@@ -42,34 +42,36 @@ namespace Winter
                 // Check for a hyphen in the title. If a hyphen exists then we need to cut all of the text after the last
                 // hyphen because that's the "VLC media player" text, which can vary based on language.
                 // If no hyphen exists then VLC is not playing anything.
-                int lastHyphen = vlcTitle.LastIndexOf("-", StringComparison.OrdinalIgnoreCase);
+                int lastHyphen = vlcTitle.LastIndexOf ( "-", StringComparison.OrdinalIgnoreCase );
 
-                if (lastHyphen > 0)
+                if ( lastHyphen > 0 )
                 {
-                    vlcTitle = vlcTitle.Substring(0, lastHyphen).Trim();
+                    vlcTitle = vlcTitle.Substring ( 0, lastHyphen ).Trim ( );
 
-                    if (Globals.SaveAlbumArtwork)
+                    if ( Globals.SaveAlbumArtwork )
                     {
-                        this.SaveBlankImage();
+                        this.SaveBlankImage ( );
                     }
 
-                    TextHandler.UpdateText(vlcTitle);
+                    TextHandler.UpdateText ( vlcTitle );
+                    this.LastTitle = vlcTitle;
                 }
                 else
                 {
-                    TextHandler.UpdateTextAndEmptyFilesMaybe(Globals.ResourceManager.GetString("NoTrackPlaying"));
+                    TextHandler.UpdateTextAndEmptyFilesMaybe ( Globals.ResourceManager.GetString ( "NoTrackPlaying" ) );
                 }
             }
             else
             {
-                if (Globals.SaveAlbumArtwork)
+                if ( Globals.SaveAlbumArtwork )
                 {
-                    this.SaveBlankImage();
+                    this.SaveBlankImage ( );
                 }
 
-                TextHandler.UpdateTextAndEmptyFilesMaybe(Globals.ResourceManager.GetString("VLCIsNotRunning"));
+                TextHandler.UpdateTextAndEmptyFilesMaybe ( Globals.ResourceManager.GetString ( "VLCIsNotRunning" ) );
             }
         }
+
 
         public override void Unload()
         {

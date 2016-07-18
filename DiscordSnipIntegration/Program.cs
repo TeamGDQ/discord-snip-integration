@@ -23,7 +23,8 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
-using Discord;
+using DiscordSharp;
+using DiscordSharp.Objects;
 
 namespace DiscordSnipIntegration
 {
@@ -40,28 +41,40 @@ namespace DiscordSnipIntegration
             https://regex101.com/r/qZ6kL3/1
         */
 
+        /*
+            Anything in [] is not from my code
+            Anything in () is critical
+            Implement {
+                [Streaming StreamName] while listening to music
+                [Playing Game] while listening to music
+                (The reason why I will not remove the snip.txt is\
+                    because we need it for OBS or whatever streaming program you have\
+                    but it would be easier to continue to read the current stream in memory\
+                    than to keep polling every redraw cycle.)
+            }
+        */
+
         private static Locale locale;
         private static string musicDir;
         private static bool quitTriggered;
         private static Settings settings;
         private static Thread threadWorker;
-        private string _currentHash;
         private Process _snipProc;
         private string _token;
-        private Profile _user;
-        private DiscordClient client;
+        private DiscordMember _me;
+        private DiscordClient _client;
         public static Locale Locale => locale;
         internal static Settings Settings => settings;
         private static string currentSong => $"{musicDir}\\{SNIPTXT}";
+        private bool _connected;
 
         [STAThread]
         public static void Main ( string [ ] args )
         {
-            Console.Title = "";
+            Console.Title = AppFull;
             LoadCritical ( );
             DisplayHeader ( );
             RunUpdates ( );
-            Console.Title = AppFull;
             threadWorker = new Thread ( new ThreadStart ( new Program ( ).Initiate ) );
             threadWorker.Start ( );
             while ( !quitTriggered )
@@ -127,24 +140,10 @@ namespace DiscordSnipIntegration
                 }
             }
         }
-
-        private void CheckTrack ( )
-        {
-            string newHash = GetFileHashString ( currentSong );
-            if ( _currentHash != newHash )
-            {
-                _currentHash = newHash;
-                SetTrack ( );
-            }
-        }
-
-        private void Client_Ready ( object sender, EventArgs e )
-        {
-            Console.WriteLine ( "Ready" );
-        }
-
+        
         private void Initiate ( )
         {
+                Console.CursorVisible = false;
             try
             {
                 // INIT PLUGIN
@@ -153,51 +152,57 @@ namespace DiscordSnipIntegration
 
                 _token = DiscordTokenHelper.GetToken ( );
 
-                client = new DiscordClient ( );
+                _client = new DiscordClient ( _token );
+                _client.Connected += ( s, e ) =>
+                {
+                    _me = _client.Me;
+                    _connected = true;
+                    _client.UpdateCurrentGame ( "DSI Initiated" );
+                    
+                };
 
-                client.Ready += Client_Ready;
+                _client.PresenceUpdated += ( s, e ) =>
+                {
+                    Console.WriteLine ($"Username: {e.User.Username}");
+                    Console.WriteLine ($"Game: {e.Game}");
+                    Console.WriteLine ($"Status: {e.Status}");
+                    Thread.Sleep ( 3000 );
+                };
 
-                client.Connect ( _token );
-
-                while ( client.State == ConnectionState.Connecting )
+                _client.SendLoginRequest ( );
+                ( new Thread ( new ThreadStart( _client.Connect ) ) ).Start ( );
+                
+                while (!_connected)
                 {
                     Console.Write ( '.' );
                     Thread.Sleep ( SLEEP );
                 }
 
-                while ( client.State == ConnectionState.Connected )
+                while ( _connected )
                 {
-                    try
-                    {
-                        Console.Clear ( );
-                        if ( _user == null || _user != client.CurrentUser )
-                            _user = client.CurrentUser;
-                        Game g = _user.CurrentGame ?? new Game ( "No Game", GameType.Default, null );
-                        Console.WriteLine ( $"{locale.ConnectedAsString} {_user.Name}" );
-                        Console.WriteLine ( $"ID: {_user.Id}" );
-                        Console.WriteLine ( $"{locale.CurrentStateString}: {client.State}" );
-                        Console.WriteLine ( $"{locale.CurrentGameStatusString}: {( g.Name )} " );
-                        Console.WriteLine ( $"{locale.CurrentUserStatusString}: {_user.Status.Value}" );
+                    string title = CurrentSong;
+                    
+                    // Console.Clear ( ); Change the way the Console interacts, or just create a stupid GUI....
+                    Console.WriteLine ( $"{locale.ConnectedAsString} {_me.Username}" );
+                    Console.WriteLine ( $"ID: {_me.ID}" );
+                    // Console.WriteLine ( $"Current Server: {_me.Parent.Name}" );
+                    Console.WriteLine ( $"{locale.CurrentGameStatusString}: {( _me.CurrentGame )} " );
+                    Console.WriteLine ( $"{locale.CurrentUserStatusString}: {_me.Status}" );
+                    Thread.Sleep ( REDRAW );
 
-                        CheckTrack ( );
-                        Thread.Sleep ( REDRAW );
-                    }
-                    catch ( System.Runtime.Serialization.SerializationException )
-                    {
-                        /** Invalid JSON String **/
-                    }
                 }
                 threadWorker.Abort ( );
             }
             catch ( Exception ex )
             {
-                Console.WriteLine ( ex );
-
                 Console.WriteLine ( ex.Message );
             }
+            Console.CursorVisible = true;
             Console.Write ( locale.PressAnyKeyString );
             Console.ReadKey ( );
             quitTriggered = true;
+            if ( _snipProc != null )
+                _snipProc.Kill ( );
         }
 
         private void InitSnip ( )
@@ -222,15 +227,9 @@ namespace DiscordSnipIntegration
             return res;
         }
 
-        private void SetTrack ( )
+        private void SetTrack (string name )
         {
-            _user.Client.SetGame ( ReadFile ( currentSong ) );
-            _user.Client.Servers.All ( ( x ) =>
-            {
-                x.Client.SetGame ( _user.Client.CurrentGame );
-
-                return true;
-            } );
+            _client.UpdateCurrentGame ( name );
         }
     }
 }

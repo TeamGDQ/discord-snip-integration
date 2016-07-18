@@ -120,7 +120,7 @@ namespace Winter
             UpdateText(title, artist, string.Empty);
         }
 
-        public static void UpdateText(string title, string artist, string album)
+        public static StringBuilder UpdateText(string title, string artist, string album)
         {
             string output = Globals.TrackFormat + Globals.SeparatorFormat + Globals.ArtistFormat;
 
@@ -163,6 +163,8 @@ namespace Winter
                     File.AppendAllText(@Application.StartupPath + @"\Snip_History.txt", output + Environment.NewLine);
                 }
             }
+            // DiscordSnipIntegration.Global.CurrentSong = output;
+            return new StringBuilder ( output );
         }
 
         public static string UnifyTitles(string title)

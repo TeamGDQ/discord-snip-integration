@@ -27,15 +27,17 @@ namespace DiscordSnipIntegration
         public static readonly string SettingsPath = $"{Path.GetDirectoryName ( Assembly.GetExecutingAssembly ( ).Location )}";
         public static readonly string SettingsFile = $"{SettingsPath}\\Settings.conf";
 
-        [JsonProperty ( PropertyName = "Accept Eula" )]
+        [JsonProperty ( PropertyName = "Accept Eula", Required = Required.Always )]
         public bool AcceptEula { get; internal set; }
 
-        [JsonProperty ( PropertyName = "Autosave" )]
+        [JsonProperty ( PropertyName = "Autosave", Required = Required.DisallowNull )]
         public bool Autosave { get; internal set; }
 
-        [JsonProperty ( PropertyName = "Preferred Locale" )]
+        [JsonProperty ( PropertyName = "Preferred Locale", Required = Required.Always )]
         public string PreferredLocale { get; internal set; }
 
+        [JsonProperty ( PropertyName = "Use .NET WebSocket", Required = Required.DisallowNull )]
+        public bool UseDotNetWebSocket { get; internal set; }
 
         public static Settings Load ( )
         {
