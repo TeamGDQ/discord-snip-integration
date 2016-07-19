@@ -36,9 +36,9 @@ namespace DiscordSnipIntegration
         [JsonProperty ( PropertyName = "Preferred Locale", Required = Required.Always )]
         public string PreferredLocale { get; internal set; }
 
-        [JsonProperty ( PropertyName = "Use .NET WebSocket", Required = Required.DisallowNull )]
-        public bool UseDotNetWebSocket { get; internal set; }
-
+        [JsonProperty ( PropertyName = "Bar Position", Required = Required.Always )]
+        public BarPosition BarPosition { get; internal set; }
+        
         public static Settings Load ( )
         {
             if ( !File.Exists ( SettingsFile ) )
@@ -46,9 +46,11 @@ namespace DiscordSnipIntegration
                 ( new Settings
                 {
                     AcceptEula = false,
-                    Autosave = true
+                    Autosave = true,
+                    PreferredLocale = "en-US"
 
                 } ).Save ( );
+                Locale.Load ( null );
             }
             StreamReader reader = new StreamReader ( SettingsFile );
             Settings s = JsonConvert.DeserializeObject<Settings> ( reader.ReadToEnd ( ) );

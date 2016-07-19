@@ -54,10 +54,7 @@ namespace DiscordSnipIntegration
 
         [JsonProperty ( PropertyName = "Current State", Required = Required.DisallowNull )]
         public string CurrentStateString { get; private set; }
-
-        [JsonProperty ( PropertyName = "Current Game Status", Required = Required.DisallowNull )]
-        public string CurrentGameStatusString { get; private set; }
-
+        
         [JsonProperty ( PropertyName = "Current User Status", Required = Required.DisallowNull )]
         public string CurrentUserStatusString { get; private set; }
 
@@ -94,15 +91,41 @@ namespace DiscordSnipIntegration
         [JsonProperty ( PropertyName = "Missing License", Required = Required.Always )]
         public string MissingLicense { get; private set; }
 
+        // Streaming $Stream while listening to $Song *
+        // Playing $Game while listening to $Song *
+        // Streaming $Stream *
+        // Playing $Game *
+        // Playing $Song *
+
+        [JsonProperty ( PropertyName = "Playing Game", Required = Required.DisallowNull )]
+        public string CurrentGameStatusString { get; private set; }
+
+        [JsonProperty ( PropertyName = "Playing Game While Listening", Required = Required.DisallowNull )]
+        public string CurrentGameWhileListeningString { get; private set; }
+
+        [JsonProperty ( PropertyName = "Streaming While Listening", Required = Required.DisallowNull )]
+        public string CurrentStreamWhileListeningString { get; private set; }
+
+        [JsonProperty ( PropertyName = "Streaming", Required = Required.DisallowNull )]
+        public string CurrentStreamStatusString { get; private set; }
+
+        [JsonProperty ( PropertyName = "Playing Song", Required = Required.DisallowNull )]
+        public string CurrentSongStatusString { get; private set; }
+
+
         internal static bool localeGenerated => lg;
 
         private static Locale ll;
+        private static Locale dl;
 
         [JsonIgnore ( )]
         public string LocaleName => ln;
 
         [JsonIgnore ( )]
         public static Locale LoadedLocale => ll;
+
+        [JsonIgnore ( )]
+        public static Locale EnUSLocale => dl;
 
         internal static void CreateGenericLocale ( )
         {
@@ -114,7 +137,15 @@ namespace DiscordSnipIntegration
             l.ConnectedAsString = "Connected as";
             l.ConnectedString = "Successfully connected to Guild";
             l.ConnectingString = "Connecting to Guild";
-            l.CurrentGameStatusString = "Current Game Status";
+
+            // These elements need to have the first word chopped off when literally updating current game status.
+            // Better yet, We need to load the en-US locale when updating the game.
+            l.CurrentGameStatusString = "Playing $Game";
+            l.CurrentGameWhileListeningString = "Playing $Game while listening to $Song";
+            l.CurrentSongStatusString = "Playing $Song";
+            l.CurrentStreamStatusString = "Streaming $Stream";
+            l.CurrentStreamWhileListeningString = "Streaming $Stream while listening to $Song";
+
             l.CurrentStateString = "Current State";
             l.CurrentUserStatusString = "Current User Status";
             l.DiscordConnectedString = "You have successfully connected to Discord";
@@ -129,6 +160,11 @@ namespace DiscordSnipIntegration
             File.WriteAllText ( usLocale, JsonConvert.SerializeObject ( l, Formatting.Indented ) );
             l = null;
             lg = true;
+        }
+
+        internal static void LoadLocales (string preferredlocale)
+        {
+            ll = Load ( preferredlocale );
         }
 
         internal static Locale Load ( string preferredlocale )
@@ -155,9 +191,6 @@ namespace DiscordSnipIntegration
             l = JsonConvert.DeserializeObject<Locale> ( reader.ReadToEnd ( ) );
 
             l.ln = preferredlocale;
-
-            ll = l;
-
 
             return l;
         }

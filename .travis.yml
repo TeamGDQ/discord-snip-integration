@@ -3,7 +3,3 @@ solution: DiscordSnipIntegration.sln
 install:
   - sudo apt-get install -y gtk-sharp2
   - nuget restore solution-name.sln
-mono:
-  - latest
-  - 3.12.0
-  - 3.10.0

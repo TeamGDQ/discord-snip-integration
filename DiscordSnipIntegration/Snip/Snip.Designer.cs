@@ -1,4 +1,6 @@
-﻿namespace Winter
+﻿using Properties = DiscordSnipIntegration.Properties;
+
+namespace Winter
 {
     public partial class Snip
     {

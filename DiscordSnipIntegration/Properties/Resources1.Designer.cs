@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Winter.Properties {
+namespace DiscordSnipIntegration.Properties {
     using System;
     
     

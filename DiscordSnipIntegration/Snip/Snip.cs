@@ -27,6 +27,8 @@ namespace Winter
     using System.Windows.Forms;
     using Microsoft.Win32;
 
+    using Properties = DiscordSnipIntegration.Properties;
+
     public partial class Snip : Form
     {
         #region Fields

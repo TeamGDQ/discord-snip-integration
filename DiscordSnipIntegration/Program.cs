@@ -23,13 +23,10 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
-using DiscordSharp;
-using DiscordSharp.Objects;
 
 namespace DiscordSnipIntegration
 {
     using static Global;
-
     internal class Program
     {
         /**
@@ -54,20 +51,10 @@ namespace DiscordSnipIntegration
             }
         */
 
-        private static Locale locale;
-        private static string musicDir;
-        private static bool quitTriggered;
         private static Settings settings;
-        private static Thread threadWorker;
-        private Process _snipProc;
-        private string _token;
-        private DiscordMember _me;
-        private DiscordClient _client;
-        public static Locale Locale => locale;
+        private static GlassBar bar;
         internal static Settings Settings => settings;
-        private static string currentSong => $"{musicDir}\\{SNIPTXT}";
-        private bool _connected;
-
+        
         [STAThread]
         public static void Main ( string [ ] args )
         {
@@ -75,11 +62,9 @@ namespace DiscordSnipIntegration
             LoadCritical ( );
             DisplayHeader ( );
             RunUpdates ( );
-            threadWorker = new Thread ( new ThreadStart ( new Program ( ).Initiate ) );
-            threadWorker.Start ( );
-            while ( !quitTriggered )
-            {
-            }
+
+            bar = new GlassBar ( );
+            bar.ShowDialog ( );
         }
 
         private static void DisplayHeader ( )
@@ -95,15 +80,15 @@ namespace DiscordSnipIntegration
         private static void LoadCritical ( )
         {
             settings = Settings.Load ( );
-            locale = Locale.Load ( settings.PreferredLocale );
+            Locale.LoadLocales ( settings.PreferredLocale );
 
             if ( Locale.localeGenerated )
             {
-                settings.PreferredLocale = locale.LocaleName;
+                settings.PreferredLocale = Locale.LoadedLocale.LocaleName;
                 settings.AutoSave ( );
             }
 
-            if ( locale == null )
+            if ( Locale.LoadedLocale == null )
             {
                 throw new NullReferenceException ( Locale.LocaleFail );
             }
@@ -133,103 +118,12 @@ namespace DiscordSnipIntegration
 
                 if ( nv > version )
                 {
-                    Console.WriteLine ( locale.UpdateAvailableString );
+                    Console.WriteLine ( Locale.LoadedLocale.UpdateAvailableString );
                     Process.Start ( $"{PROJECTURL}/{nv.Filename}" );
-                    Console.WriteLine ( locale.PressAnyKeyString );
+                    Console.WriteLine ( Locale.LoadedLocale.PressAnyKeyString );
                     Console.ReadKey ( true );
                 }
             }
-        }
-        
-        private void Initiate ( )
-        {
-                Console.CursorVisible = false;
-            try
-            {
-                // INIT PLUGIN
-
-                InitSnip ( );
-
-                _token = DiscordTokenHelper.GetToken ( );
-
-                _client = new DiscordClient ( _token );
-                _client.Connected += ( s, e ) =>
-                {
-                    _me = _client.Me;
-                    _connected = true;
-                    _client.UpdateCurrentGame ( "DSI Initiated" );
-                    
-                };
-
-                _client.PresenceUpdated += ( s, e ) =>
-                {
-                    Console.WriteLine ($"Username: {e.User.Username}");
-                    Console.WriteLine ($"Game: {e.Game}");
-                    Console.WriteLine ($"Status: {e.Status}");
-                    Thread.Sleep ( 3000 );
-                };
-
-                _client.SendLoginRequest ( );
-                ( new Thread ( new ThreadStart( _client.Connect ) ) ).Start ( );
-                
-                while (!_connected)
-                {
-                    Console.Write ( '.' );
-                    Thread.Sleep ( SLEEP );
-                }
-
-                while ( _connected )
-                {
-                    string title = CurrentSong;
-                    
-                    // Console.Clear ( ); Change the way the Console interacts, or just create a stupid GUI....
-                    Console.WriteLine ( $"{locale.ConnectedAsString} {_me.Username}" );
-                    Console.WriteLine ( $"ID: {_me.ID}" );
-                    // Console.WriteLine ( $"Current Server: {_me.Parent.Name}" );
-                    Console.WriteLine ( $"{locale.CurrentGameStatusString}: {( _me.CurrentGame )} " );
-                    Console.WriteLine ( $"{locale.CurrentUserStatusString}: {_me.Status}" );
-                    Thread.Sleep ( REDRAW );
-
-                }
-                threadWorker.Abort ( );
-            }
-            catch ( Exception ex )
-            {
-                Console.WriteLine ( ex.Message );
-            }
-            Console.CursorVisible = true;
-            Console.Write ( locale.PressAnyKeyString );
-            Console.ReadKey ( );
-            quitTriggered = true;
-            if ( _snipProc != null )
-                _snipProc.Kill ( );
-        }
-
-        private void InitSnip ( )
-        {
-            _snipProc = Process.GetProcessesByName ( SNIP ).FirstOrDefault ( );
-            if ( _snipProc == null )
-            {
-                Task.Run ( new Action ( ( ) => Winter.SpotifyNowPlaying.SnipInit ( ) ) );
-                musicDir = StartupPath;
-                return;
-            }
-            musicDir = Path.GetDirectoryName ( _snipProc.MainModule.FileName );
-        }
-
-        private string ReadFile ( string path )
-        {
-            string res = string.Empty;
-            using ( StreamReader reader = new StreamReader ( path ) )
-            {
-                res = reader.ReadToEnd ( );
-            }
-            return res;
-        }
-
-        private void SetTrack (string name )
-        {
-            _client.UpdateCurrentGame ( name );
         }
     }
 }
