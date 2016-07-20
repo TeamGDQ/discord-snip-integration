@@ -27,6 +27,7 @@ using System.Threading.Tasks;
 namespace DiscordSnipIntegration
 {
     using static Global;
+
     internal class Program
     {
         /**
@@ -58,23 +59,27 @@ namespace DiscordSnipIntegration
         [STAThread]
         public static void Main ( string [ ] args )
         {
-            Console.Title = AppFull;
+            Trace.AllocConsole ( );
+
+            Trace.SetTitle (AppFull);
             LoadCritical ( );
             DisplayHeader ( );
             RunUpdates ( );
 
+            Trace.Info ( "Launching new GlassBar()" );
             bar = new GlassBar ( );
             bar.ShowDialog ( );
+            Trace.FreeConsole ( );
         }
 
         private static void DisplayHeader ( )
         {
-            Console.WriteLine ( AppFull );
-            Console.WriteLine ( AppCopy );
+            Trace.WriteLine ( AppFull );
+            Trace.WriteLine ( AppCopy );
 
             PrintWarningByCurrentRepo ( );
 
-            Console.WriteLine ( );
+            Trace.WriteLine ( );
         }
 
         private static void LoadCritical ( )
@@ -118,10 +123,10 @@ namespace DiscordSnipIntegration
 
                 if ( nv > version )
                 {
-                    Console.WriteLine ( Locale.LoadedLocale.UpdateAvailableString );
+                    Trace.WriteLine ( Locale.LoadedLocale.UpdateAvailableString );
                     Process.Start ( $"{PROJECTURL}/{nv.Filename}" );
-                    Console.WriteLine ( Locale.LoadedLocale.PressAnyKeyString );
-                    Console.ReadKey ( true );
+                    Trace.WriteLine ( Locale.LoadedLocale.PressAnyKeyString );
+                    Trace.ReadKey ( true );
                 }
             }
         }

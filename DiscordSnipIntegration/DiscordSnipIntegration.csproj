@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{9E466D40-0B9C-4DCF-AF59-9E7F012F1FED}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>DiscordSnipIntegration</RootNamespace>
     <AssemblyName>DiscordSnipIntegration</AssemblyName>
@@ -188,6 +188,7 @@
     <Compile Include="Snip\TextHandler.cs" />
     <Compile Include="Snip\UnsafeNativeMethods.cs" />
     <Compile Include="ToasterVersion.cs" />
+    <Compile Include="Verlogger.cs" />
     <Compile Include="WindowBlur.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -25,6 +25,8 @@ namespace DiscordSnipIntegration
         private const string GameWithSong = "$Game while listening to $Song";
         private const string StreamWithSong = "$Stream while listening to $Song";
 
+        private string _lastGame;
+        
         public DeusX (GlassBar frame)
         {
             _win = frame;
@@ -35,22 +37,23 @@ namespace DiscordSnipIntegration
         {
             Task.Run ( new Action ( ( ) => Winter.SpotifyNowPlaying.SnipInit ( ) ) );
         }
-
-
+        
         private void SetTrack ( string gameName, string songName = "", bool listening = false, bool playing = false, bool streaming = false, string url = "" )
         {
+            _lastGame = gameName;
+            Trace.__verbose ( $"Current Game: {gameName}" );
             // Three different approaches, Define these in Locale?
             // Streaming $Stream while listening to $Song
             // Playing $Game while listening to $Song
             // Playing $Song
 
             string x = string.Empty;
-            if ( string.IsNullOrEmpty ( gameName ) )
-                gameName = "Nothing";
+            if ( string.IsNullOrEmpty ( gameName ) || gameName == Global.LastSong )
+                gameName = "";
             // possible crash?
             int len = gameName.IndexOf ( gameName.Replace ( GameName, "" ) ) + 1;
             len = len <= 1 ? gameName.Length : len;
-            
+
             string g = gameName.Substring ( 0, len );
 
             if ( streaming )
@@ -64,9 +67,9 @@ namespace DiscordSnipIntegration
                     x = StreamName.Replace ( StreamName, url );
                 }
             }
-            else if (playing)
+            else if ( playing )
             {
-                if(listening)
+                if ( listening )
                 {
                     x = GameWithSong.Replace ( GameName, gameName ).Replace ( SongName, songName );
                 }
@@ -77,7 +80,7 @@ namespace DiscordSnipIntegration
             }
             else
             {
-                if(listening)
+                if ( listening )
                 {
                     x = SongName.Replace ( SongName, songName );
                 }
@@ -86,9 +89,18 @@ namespace DiscordSnipIntegration
                     x = GameName.Replace ( GameName, gameName );
                 }
             }
-            if ( _client.State == ConnectionState.Connected )
-                _client.SetGame ( new Game ( x, streaming ? GameType.Twitch : GameType.Default, url ) );
-            _win.SetNowPlaying ( x );
+
+            Game game = new Game ( x, streaming ? GameType.Twitch : GameType.Default, url );
+
+
+            if ( _lastGame != game.Name )
+            {
+                Trace.Info ( $"Setting Game Status to {x}" );
+                if ( _client.State == ConnectionState.Connected )
+                    _client.SetGame ( game );
+                _win.SetNowPlaying ( x );
+                _lastGame = game.Name;
+            }
         }
 
         private void Initiate ( )
@@ -107,7 +119,7 @@ namespace DiscordSnipIntegration
                     _me = _client.CurrentUser;
                     _connected = true;
                     _win.SetStatus ( GlassConnectionStatus.Online );
-                    Debug.WriteLine ( "We are connected", "Discord API Connection" );
+                    Trace.Success ( "We are connected" );
                     Run ( );
                 };
                 
@@ -124,12 +136,13 @@ namespace DiscordSnipIntegration
             }
             catch ( Exception ex )
             {
-                Debug.WriteLine ( ex.ToString ( ), "DSI ERROR" );
+                Trace.Error ( ex.ToString ( ) );
             }
         }
 
         private void Run ( )
         {
+            Trace.Warning ( $"Are we connected? {( _connected ? "We are successfully connected, yet We couldn't rely on our own bool, yet the library's" : "Nope, We are not connected" )}" );
             while ( _connected )
             {
                 string title = Global.CurrentSong;
@@ -137,16 +150,24 @@ namespace DiscordSnipIntegration
                 // Console.Clear ( ); Change the way the Console interacts, or just create a stupid GUI....
                 // Console.WriteLine ( $"{Program.Locale.ConnectedAsString} {_me.Username}" );
                 _win.SetUser ( _me.Name );
-                Game g = ( _me.CurrentGame ?? new Game ( "" ) );
-
-                SetTrack (
-                    g.Name,
-                    title,
-                    !string.IsNullOrEmpty ( title ),
-                    !string.IsNullOrEmpty ( g.Name ) && !g.Name.Contains( title ),
-                    g.Type == GameType.Twitch ? true : false,
-                    g.Url
-                    );
+                try
+                {
+                    Game g = ( _me.CurrentGame != null && _me.CurrentGame.HasValue ) ? _me.CurrentGame.Value : new Game ( );
+                    
+                    SetTrack (
+                        g.Name,
+                        title,
+                        !string.IsNullOrEmpty ( title ),
+                        !string.IsNullOrEmpty ( g.Name ) && !g.Name.Contains ( title ),
+                        g.Type == GameType.Twitch ? true : false,
+                        g.Url
+                        );
+                }
+                catch ( Exception ex )
+                {
+                    Trace.Error ( ex.Message );
+                }
+                Thread.Sleep ( 1000 );
             }
             _win.SetNowPlaying ( Locale.LoadedLocale.AuthFailString );
             _win.SetStatus ( GlassConnectionStatus.Offline );
