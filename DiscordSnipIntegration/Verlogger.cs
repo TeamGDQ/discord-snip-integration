@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 
 namespace DiscordSnipIntegration
 {
-    internal class NativeMethods
+    internal static class NativeMethods
     {
         public const int FOREGROUND_BLUE = 0x01;
         public const int FOREGROUND_GREEN = 0x02;
@@ -110,7 +110,7 @@ namespace DiscordSnipIntegration
         [DllImport ( "kernel32.dll", SetLastError = true )]
         public static extern bool GetConsoleScreenBufferInfoEx (
            IntPtr hConsoleOutput,
-           ref CONSOLE_SCREEN_BUFFER_INFOEX ConsoleScreenBufferInfo
+           ref ConsoleScreenBufferInfoEx consoleScreenBufferInfo
            );
 
         [DllImport ( "user32.dll" )] // import lockwindow to remove flashing
@@ -126,8 +126,8 @@ namespace DiscordSnipIntegration
 
         [DllImport ( "kernel32.dll", SetLastError = true )]
         public static extern bool SetConsoleScreenBufferInfoEx (
-           IntPtr ConsoleOutput,
-           ref CONSOLE_SCREEN_BUFFER_INFOEX ConsoleScreenBufferInfoEx
+           IntPtr consoleOutput,
+           ref ConsoleScreenBufferInfoEx consoleScreenBufferInfoEx
            );
 
         [DllImport ( "kernel32.dll" )]
@@ -141,11 +141,11 @@ namespace DiscordSnipIntegration
         private static extern IntPtr GetStdHandle ( int nStdHandle );
 
         [StructLayout ( LayoutKind.Sequential )]
-        public struct COLORREF
+        public struct ColorRef
         {
             public uint ColorDWORD;
 
-            public COLORREF ( Color color )
+            public ColorRef ( Color color )
             {
                 ColorDWORD = color.R + ( ( ( uint ) color.G ) << 8 ) + ( ( ( uint ) color.B ) << 16 );
             }
@@ -163,40 +163,40 @@ namespace DiscordSnipIntegration
         }
 
         [StructLayout ( LayoutKind.Sequential )]
-        public struct CONSOLE_SCREEN_BUFFER_INFOEX
+        public struct ConsoleScreenBufferInfoEx
         {
             public uint cbSize;
-            public COORD dwSize;
-            public COORD dwCursorPosition;
+            public Coord dwSize;
+            public Coord dwCursorPosition;
             public short wAttributes;
-            public SMALL_RECT srWindow;
-            public COORD dwMaximumWindowSize;
+            public SmallRect srWindow;
+            public Coord dwMaximumWindowSize;
 
             public ushort wPopupAttributes;
             public bool bFullscreenSupported;
 
             [MarshalAs ( UnmanagedType.ByValArray, SizeConst = 16 )]
-            public COLORREF [ ] ColorTable;
+            public ColorRef [ ] ColorTable;
 
-            public static CONSOLE_SCREEN_BUFFER_INFOEX Create ( )
+            public static ConsoleScreenBufferInfoEx Create ( )
             {
-                return new CONSOLE_SCREEN_BUFFER_INFOEX { cbSize = 96 };
+                return new ConsoleScreenBufferInfoEx { cbSize = 96 };
             }
         }
 
         [StructLayout ( LayoutKind.Sequential )]
-        public struct COORD
+        public struct Coord
         {
             public short X;
             public short Y;
         }
 
         [StructLayout ( LayoutKind.Sequential )]
-        public struct RGB
+        public struct Rgb
         {
             private byte byRed, byGreen, byBlue, RESERVED;
 
-            public RGB ( Color colorIn )
+            public Rgb ( Color colorIn )
             {
                 byRed = colorIn.R;
                 byGreen = colorIn.G;
@@ -204,7 +204,7 @@ namespace DiscordSnipIntegration
                 RESERVED = 0;
             }
 
-            public RGB ( byte R, byte G, byte B )
+            public Rgb ( byte R, byte G, byte B )
             {
                 byRed = R;
                 byGreen = G;
@@ -212,23 +212,23 @@ namespace DiscordSnipIntegration
                 RESERVED = 0;
             }
 
-            public static implicit operator Color ( RGB rgb )
+            public static implicit operator Color ( Rgb rgb )
             {
                 return Color.FromArgb ( rgb.byRed, rgb.byGreen, rgb.byBlue );
             }
 
             public int ToInt32 ( )
             {
-                byte [ ] RGBCOLORS = new byte [ 4 ];
-                RGBCOLORS [ 0 ] = byRed;
-                RGBCOLORS [ 1 ] = byGreen;
-                RGBCOLORS [ 2 ] = byBlue;
-                RGBCOLORS [ 3 ] = RESERVED;
-                return BitConverter.ToInt32 ( RGBCOLORS, 0 );
+                byte [ ] rgbcolors = new byte [ 4 ];
+                rgbcolors [ 0 ] = byRed;
+                rgbcolors [ 1 ] = byGreen;
+                rgbcolors [ 2 ] = byBlue;
+                rgbcolors [ 3 ] = RESERVED;
+                return BitConverter.ToInt32 ( rgbcolors, 0 );
             }
         }
 
-        public struct SMALL_RECT
+        public struct SmallRect
         {
             public short Bottom;
             public short Left;
@@ -237,7 +237,7 @@ namespace DiscordSnipIntegration
         }
     }
 
-    internal class Trace
+    internal static class Trace
     {
         [Conditional ( "DEBUG" )]
         public static void AllocConsole ( )
@@ -250,7 +250,7 @@ namespace DiscordSnipIntegration
         {
             Console.ForegroundColor = ConsoleColor.Red;
             Console.BackgroundColor = ConsoleColor.Black;
-            WriteLine ( $"[ERROR: {DateTime.Now:HH:mm:ss}] {msg}" );
+            PrintLine ( "ERROR", msg );
             Console.ResetColor ( );
         }
 
@@ -265,7 +265,7 @@ namespace DiscordSnipIntegration
         {
             Console.ForegroundColor = ConsoleColor.DarkMagenta;
             Console.BackgroundColor = ConsoleColor.Black;
-            WriteLine ( $"[INFO: {DateTime.Now:HH:mm:ss}] {msg}" );
+            PrintLine ( "INFO", msg );
             Console.ResetColor ( );
         }
 
@@ -275,11 +275,7 @@ namespace DiscordSnipIntegration
             NativeMethods.ShowWindowAsync ( NativeMethods.ConsoleHandle, NativeMethods.ShowWindowCommands.Maximize );
         }
 
-        public static ConsoleKeyInfo ReadKey ( )
-        {
-            return ReadKey ( false );
-        }
-        public static ConsoleKeyInfo ReadKey ( bool intercept )
+        public static ConsoleKeyInfo ReadKey ( bool intercept = false )
         {
 #if DEBUG
             return Console.ReadKey ( intercept );
@@ -306,7 +302,7 @@ namespace DiscordSnipIntegration
         {
             Console.ForegroundColor = ConsoleColor.Green;
             Console.BackgroundColor = ConsoleColor.Black;
-            WriteLine ( $"[SUCCESS: {DateTime.Now:HH:mm:ss}] {msg}" );
+            PrintLine ( "SUCCESS", msg );
             Console.ResetColor ( );
         }
 
@@ -315,7 +311,7 @@ namespace DiscordSnipIntegration
         {
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.BackgroundColor = ConsoleColor.Black;
-            WriteLine ( $"[WARNING: {DateTime.Now:HH:mm:ss}] {msg}" );
+            PrintLine ( "WARNING", msg );
             Console.ResetColor ( );
         }
 
@@ -326,14 +322,14 @@ namespace DiscordSnipIntegration
         }
 
         [Conditional ( "DEBUG" )]
-        public static void WriteLine ( string msg )
+        public static void WriteLine ( string msg = "" )
         {
             Console.WriteLine ( msg );
         }
 
-        public static void WriteLine ( )
-        {
-            WriteLine ( "" );
+        [Conditional("DEBUG")]
+        public static void PrintLine( string tag, string msg ) {
+            WriteLine( $"[{tag}: {DateTime.Now:HH:mm:ss}] {msg}" );
         }
 
         [Conditional ( "DEBUG" )]
@@ -341,7 +337,7 @@ namespace DiscordSnipIntegration
         {
             Console.ForegroundColor = ConsoleColor.White;
             Console.BackgroundColor = ConsoleColor.Black;
-            WriteLine ( $"[VERBOSE: {DateTime.Now:HH:mm:ss}] {msg}" );
+            PrintLine( "VERBOSE", msg );
             Console.ResetColor ( );
         }
     }

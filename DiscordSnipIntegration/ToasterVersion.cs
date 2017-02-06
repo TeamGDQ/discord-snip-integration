@@ -76,7 +76,7 @@ namespace DiscordSnipIntegration
 
         public static ToasterVersion GetInternalVersion(Repo repo = Repo.Scaring)
         {
-            int[] ver = About.Version.Split ( '.' ).Where ( ( s ) => IsNumber ( s ) ).Select ( ( s ) => int.Parse ( s ) ).ToArray();
+            int[] ver = About.Version.Split ( '.' ).Where ( IsNumber ).Select ( int.Parse ).ToArray();
             
             return new ToasterVersion
             {
@@ -88,14 +88,8 @@ namespace DiscordSnipIntegration
             };
         }
 
-        private static bool IsNumber ( string x )
-        {
-            foreach ( char c in x )
-            {
-                if ( !char.IsNumber ( c ) )
-                    return false;
-            }
-            return true;
+        private static bool IsNumber ( string x ) {
+            return x.All( char.IsNumber );
         }
 
         public string CreateUpdateString()
@@ -103,58 +97,28 @@ namespace DiscordSnipIntegration
             return JsonConvert.SerializeObject ( this, Formatting.None );
         }
 
-        public static bool operator > ( ToasterVersion a, ToasterVersion b )
-        {
-            if ( a.version ( ) > b.version ( ) || a.Repo > b.Repo )
-            {
-                return true;
-            }
-            return false;
+        public static bool operator > ( ToasterVersion a, ToasterVersion b ) {
+            return a.version ( ) > b.version ( ) || a.Repo > b.Repo;
         }
 
-        public static bool operator < ( ToasterVersion a, ToasterVersion b )
-        {
-            if ( a.version ( ) < b.version ( )  || a.Repo < b.Repo)
-            {
-                return true;
-            }
-            return false;
+        public static bool operator < ( ToasterVersion a, ToasterVersion b ) {
+            return a.version ( ) < b.version ( )  || a.Repo < b.Repo;
         }
 
-        public static bool operator >= (ToasterVersion a, ToasterVersion b)
-        {
-            if ( a.version ( ) >= b.version ( )  || a.Repo >= b.Repo)
-            {
-                return true;
-            }
-            return false;
+        public static bool operator >= (ToasterVersion a, ToasterVersion b) {
+            return a.version ( ) >= b.version ( )  || a.Repo >= b.Repo;
         }
 
-        public static bool operator <= (ToasterVersion a, ToasterVersion b)
-        {
-            if(a.version() <= b.version() ||  a.Repo <= b.Repo)
-            {
-                return true;
-            }
-            return false;
+        public static bool operator <= (ToasterVersion a, ToasterVersion b) {
+            return a.version() <= b.version() ||  a.Repo <= b.Repo;
         }
 
-        public static bool operator == ( ToasterVersion a, ToasterVersion b )
-        {
-            if ( a.version ( ) == b.version ( ) && a.Repo == b.Repo)
-            {
-                return true;
-            }
-            return false;
+        public static bool operator == ( ToasterVersion a, ToasterVersion b ) {
+            return a.version ( ) == b.version ( ) && a.Repo == b.Repo;
         }
 
-        public static bool operator != ( ToasterVersion a, ToasterVersion b )
-        {
-            if ( a.version ( ) != b.version ( ) && a.Repo != b.Repo )
-            {
-                return true;
-            }
-            return false;
+        public static bool operator != ( ToasterVersion a, ToasterVersion b ) {
+            return a.version ( ) != b.version ( ) && a.Repo != b.Repo;
         }
 
         private Version version ()

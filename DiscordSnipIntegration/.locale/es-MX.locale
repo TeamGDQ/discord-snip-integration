@@ -4,7 +4,6 @@
     "Cannot find Snip": "No podemos encontrar Snip...",
     "Connected": "Conectado exitosamente a Guild",
     "Connecting": "Conectando a Guild",
-    "Current Game Status": "Estado Actual del Juego",
     "Current State": "Estado Actual",
     "Current User Status": "Estado Actual del Usuario",
     "Development Stage": "Este programa se encuentra en sus etapas de desarrollo, si se trata de Alfa, Beta, o desarrollo, por favor espere un montón de errores. Gracias.",
@@ -17,5 +16,10 @@
     "Press any key to quit": "Presione cualquier tecla para salir.",
     "Scaring Stage": "Este programa se encuentra en sus etapas de desarrollo, sin embargo, esta versión se considera más estable. Espera menos errores.",
     "Update Available": "Actualización Disponible",
-    "You are connected as": "Conectado como"
+    "You are connected as": "Conectado como",
+    "Playing Game": "Jugar $Game",
+    "Playing Game While Listening": "Jugar $Game mientras escucha $Song",
+    "Streaming While Listening": "Streaming $Stream mientras escucha $Song",
+    "Streaming": "Transmisión de $Stream",
+    "Playing Song": "$Song Jugando"
 }

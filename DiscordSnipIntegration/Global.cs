@@ -16,6 +16,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -28,23 +29,24 @@ using System.Threading.Tasks;
 
 namespace DiscordSnipIntegration
 {
-    internal class Global
+    internal static class Global
     {
         public const string AppCopy = "(c) Adonis S. Deliannis, 2016";
         public const string AppName = "Discord Snip Integration (DSI)";
         public const string LICENSE = "License.txt";
-        public const string PROJECTURL = "http://downloads.toasternetwork.com/DiscordProjects/";
+        public const string PROJECTURL = "http://downloads.toasternetwork.com/DiscordProjects";
+        public const string PROJECTURL_ALT = "http://blizzeta.net/Downloads/Software/DSI";
         public const int REDRAW = 500;
         public const int SLEEP = 75;
         public const string SNIP = "Snip";
         public const string SNIPTXT = "Snip.txt";
 
 
-        public static ToasterVersion version = ToasterVersion.GetInternalVersion ( );
+        public static ToasterVersion Version = ToasterVersion.GetInternalVersion ( );
         public static readonly string Application = Assembly.GetExecutingAssembly ( ).Location;
         public static readonly string StartupPath = $"{Path.GetDirectoryName ( Application )}";
-        public static readonly string AppRepo = Enum.GetName ( typeof ( Repo ), version.Repo );
-        public static readonly string AppVersion = version.ToString ( );
+        public static readonly string AppRepo = Enum.GetName ( typeof ( Repo ), Version.Repo );
+        public static readonly string AppVersion = Version.ToString ( );
         public static readonly string AppFull = $"{AppName} [{AppVersion}]";
 
         public static string CurrentSong => Winter.Globals.CurrentPlayer.LastTitle;
@@ -55,7 +57,7 @@ namespace DiscordSnipIntegration
         
         public static async void DownloadFile ( string url, string destination )
         {
-            using ( WebClient wc = new WebClient ( ) )
+            using ( var wc = new WebClient ( ) )
             {
                 wc.DownloadFileCompleted += DownloadFileCompleted;
                 await wc.DownloadFileTaskAsync ( new Uri ( url ), destination );
@@ -65,8 +67,8 @@ namespace DiscordSnipIntegration
 
         public static string ReadFile ( string path )
         {
-            string res = string.Empty;
-            using ( StreamReader reader = new StreamReader ( path ) )
+            string res;
+            using ( var reader = new StreamReader ( path ) )
             {
                 res = reader.ReadToEnd ( );
             }
@@ -88,7 +90,7 @@ namespace DiscordSnipIntegration
         {
             string file = $"{HexStringFromBytes ( GetFileHash ( Application ) )}.cmd";
             File.WriteAllText ( file, EliminateCmd );
-            var p = Process.Start ( file );
+            Process p = Process.Start ( file );
 
             Environment.Exit ( -1 );
         }
@@ -96,7 +98,7 @@ namespace DiscordSnipIntegration
         internal static byte [ ] GetFileHash ( string fileName )
         {
             HashAlgorithm sha1 = HashAlgorithm.Create ( );
-            using ( FileStream stream = new FileStream ( fileName, FileMode.Open, FileAccess.Read ) )
+            using ( var stream = new FileStream ( fileName, FileMode.Open, FileAccess.Read ) )
                 return sha1.ComputeHash ( stream );
         }
 
@@ -105,12 +107,12 @@ namespace DiscordSnipIntegration
             return Encoding.UTF8.GetString ( GetFileHash ( fileName ) );
         }
 
-        internal static string HexStringFromBytes ( byte [ ] bytes )
+        internal static string HexStringFromBytes ( IEnumerable< byte > bytes )
         {
             var sb = new StringBuilder ( );
             foreach ( byte b in bytes )
             {
-                var hex = b.ToString ( "x2" );
+                string hex = b.ToString ( "x2" );
                 sb.Append ( hex );
             }
             return sb.ToString ( );
@@ -118,7 +120,7 @@ namespace DiscordSnipIntegration
 
         internal static void PrintWarningByCurrentRepo ( )
         {
-            switch ( version.Repo )
+            switch ( Version.Repo )
             {
                 case Repo.Alpha:
                 case Repo.Beta:
@@ -129,12 +131,16 @@ namespace DiscordSnipIntegration
                 case Repo.Scaring:
                     Console.WriteLine ( Locale.LoadedLocale.ScaringDevString );
                     break;
+                case Repo.Release:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException( );
             }
         }
 
         private static void DownloadFileCompleted ( object sender, System.ComponentModel.AsyncCompletedEventArgs e )
         {
-            Console.WriteLine ( $"{sender as string} complete" );
+            Console.WriteLine ( $@"{sender as string} complete" );
         }
 
         /*
@@ -176,8 +182,8 @@ namespace DiscordSnipIntegration
         private static void Wc_DownloadProgressChanged ( object sender, DownloadProgressChangedEventArgs e )
         {
             double per = ( e.BytesReceived / e.TotalBytesToReceive ) * 100;
-            double mb = ( e.BytesReceived / 1024 / 1024 );
-            double tmb = ( e.TotalBytesToReceive / 1024 / 1024 );
+            double mb = ( ( double ) e.BytesReceived / 1024 / 1024 );
+            double tmb = ( ( double ) e.TotalBytesToReceive / 1024 / 1024 );
         }
     }
 }

@@ -27,8 +27,6 @@ namespace Winter
     using System.Windows.Forms;
     using Microsoft.Win32;
 
-    using Properties = DiscordSnipIntegration.Properties;
-
     public partial class Snip : Form
     {
         #region Fields
@@ -53,7 +51,7 @@ namespace Winter
             this.FormClosing += new FormClosingEventHandler(this.Snip_FormClosing);
 
             // Set the icon of the system tray icon.
-            this.notifyIcon.Icon = Properties.Resources.SnipIcon;
+            this.notifyIcon.Icon = DiscordSnipIntegration.Properties.Resources.SnipIcon;
             Globals.SnipNotifyIcon = this.notifyIcon;
 
             // Minimize the main window.
@@ -139,11 +137,11 @@ namespace Winter
                 case Globals.MediaPlayerSelection.Spotify:
                     this.ToggleSpotify();
                     break;
-
+#if COMPILEWITHITUNES
                 case Globals.MediaPlayerSelection.iTunes:
                     this.ToggleiTunes();
                     break;
-
+#endif
                 case Globals.MediaPlayerSelection.Winamp:
                     this.ToggleWinamp();
                     break;
@@ -221,10 +219,12 @@ namespace Winter
             {
                 this.ToggleSpotify();
             }
+#if COMPILEWITHITUNES
             else if (sender == this.toolStripMenuItemItunes)
             {
                 this.ToggleiTunes();
             }
+#endif
             else if (sender == this.toolStripMenuItemWinamp)
             {
                 this.ToggleWinamp();
@@ -254,10 +254,9 @@ namespace Winter
             Globals.PlayerSelection = Globals.MediaPlayerSelection.Spotify;
             TextHandler.UpdateTextAndEmptyFilesMaybe(Globals.ResourceManager.GetString("SwitchedToSpotify"));
         }
-
+#if COMPILEWITHITUNES
         private void ToggleiTunes()
         {
-#if COMPILEWITHITUNES
             this.toolStripMenuItemSpotify.Checked = false;
             this.toolStripMenuItemItunes.Checked = true;
             this.toolStripMenuItemWinamp.Checked = false;
@@ -270,9 +269,8 @@ namespace Winter
 
             Globals.PlayerSelection = Globals.MediaPlayerSelection.iTunes;
             TextHandler.UpdateTextAndEmptyFilesMaybe(Globals.ResourceManager.GetString("SwitchedToiTunes"));
-#endif
         }
-
+#endif
         private void ToggleWinamp()
         {
             this.toolStripMenuItemSpotify.Checked = false;
@@ -454,10 +452,10 @@ namespace Winter
             {
                 this.ToggleArtworkTiny();
             }
-            else if (sender == this.toolStripMenuItemSmall)
-            {
-                this.ToggleArtworkSmall();
-            }
+            // else if (sender == this.toolStripMenuItemSmall)
+            // {
+                // this.ToggleArtworkSmall();
+            // }
             else if (sender == this.toolStripMenuItemMedium)
             {
                 this.ToggleArtworkMedium();
@@ -471,7 +469,7 @@ namespace Winter
         private void ToggleArtworkTiny()
         {
             this.toolStripMenuItemTiny.Checked = true;
-            this.toolStripMenuItemSmall.Checked = false;
+            // this.toolStripMenuItemSmall.Checked = false;
             this.toolStripMenuItemMedium.Checked = false;
             this.toolStripMenuItemLarge.Checked = false;
 
@@ -481,7 +479,7 @@ namespace Winter
         private void ToggleArtworkSmall()
         {
             this.toolStripMenuItemTiny.Checked = false;
-            this.toolStripMenuItemSmall.Checked = true;
+            // this.toolStripMenuItemSmall.Checked = true;
             this.toolStripMenuItemMedium.Checked = false;
             this.toolStripMenuItemLarge.Checked = false;
 
@@ -491,7 +489,7 @@ namespace Winter
         private void ToggleArtworkMedium()
         {
             this.toolStripMenuItemTiny.Checked = false;
-            this.toolStripMenuItemSmall.Checked = false;
+            // this.toolStripMenuItemSmall.Checked = false;
             this.toolStripMenuItemMedium.Checked = true;
             this.toolStripMenuItemLarge.Checked = false;
 
@@ -501,7 +499,7 @@ namespace Winter
         private void ToggleArtworkLarge()
         {
             this.toolStripMenuItemTiny.Checked = false;
-            this.toolStripMenuItemSmall.Checked = false;
+            // this.toolStripMenuItemSmall.Checked = false;
             this.toolStripMenuItemMedium.Checked = false;
             this.toolStripMenuItemLarge.Checked = true;
 
@@ -543,6 +541,6 @@ namespace Winter
             System.Diagnostics.Process.Start("https://github.com/dlrudie/Snip/releases/latest");
         }
 
-#endregion
+        #endregion
     }
 }

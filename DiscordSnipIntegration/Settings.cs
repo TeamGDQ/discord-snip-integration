@@ -36,6 +36,9 @@ namespace DiscordSnipIntegration
         [JsonProperty ( PropertyName = "Preferred Locale", Required = Required.Always )]
         public string PreferredLocale { get; internal set; }
 
+        [JsonProperty(PropertyName = "Snip Location", Required = Required.Always)]
+        public string SnipLocation { get; internal set; }
+
         [JsonProperty ( PropertyName = "Bar Position", Required = Required.Always )]
         public BarPosition BarPosition { get; internal set; }
         
@@ -47,13 +50,14 @@ namespace DiscordSnipIntegration
                 {
                     AcceptEula = false,
                     Autosave = true,
-                    PreferredLocale = "en-US"
+                    PreferredLocale = "en-US",
+                    SnipLocation = "snip.txt",
 
                 } ).Save ( );
                 Locale.Load ( null );
             }
-            StreamReader reader = new StreamReader ( SettingsFile );
-            Settings s = JsonConvert.DeserializeObject<Settings> ( reader.ReadToEnd ( ) );
+            var reader = new StreamReader ( SettingsFile );
+            var s = JsonConvert.DeserializeObject<Settings> ( reader.ReadToEnd ( ) );
             reader.Close ( );
             reader = null;
             return s;

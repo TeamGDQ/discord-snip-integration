@@ -20,7 +20,7 @@ using System.IO;
 
 namespace DiscordSnipIntegration
 {
-    public class DiscordTokenHelper
+    public static class DiscordTokenHelper
     {
 
         private const string Key = "key";
@@ -38,25 +38,21 @@ namespace DiscordSnipIntegration
         {
             using ( var conn = new SQLiteConnection ( Statement ) )
             {
-
-                using ( var cmd = conn.CreateCommand ( ) )
+                using ( SQLiteCommand cmd = conn.CreateCommand ( ) )
                 {
                     conn.Open ( );
 
                     cmd.CommandText = Command;
-
-
-                    using ( var reader = cmd.ExecuteReader ( ) )
+                    
+                    using ( SQLiteDataReader reader = cmd.ExecuteReader ( ) )
                     {
                         while ( reader.Read ( ) )
                         {
-
                             string key = reader.GetString ( reader.GetOrdinal ( Key ) );
                             string value = reader.GetString ( reader.GetOrdinal ( Value ) );
                             if ( key == Token )
                             {
                                 return value.Trim ( Trim );
-                                
                             }
                         }
                     }

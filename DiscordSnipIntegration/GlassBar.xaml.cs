@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows;
@@ -25,35 +26,58 @@ namespace DiscordSnipIntegration
     /// <summary>
     /// Interaction logic for GlassBar.xaml
     /// </summary>
-    public partial class GlassBar : Window
-    {
+    public partial class GlassBar : Window {
+        private const double OffsetX = 1;
+        private const double OffsetY = 0.15;
+
+        private const double ChromeOffsetX = 0.85;
+        private const double ChromeOffsetY = 1;
+
+        private const string Chrome = "Chrome";
+        private const string ChromeEnd = "ChromeEnd";
+        private const string Base = "Base";
+        private const string Offline = "Offline";
+        private const string Online = "Online";
+        private const string Idle = "Idle";
+        private const string Connecting = "Connecting";
+
+        private static readonly Dictionary< string, Color > Colours = new Dictionary< string, Color > {
+            [ChromeEnd] = Colors.Black,
+            [Chrome] = Color.FromArgb( 0xFF, 0xC5, 0xC5, 0xC5 ),
+            [Base] = Color.FromArgb( 0x7F, 0x00, 0x00, 0x00 ),
+            [Offline] = Colors.Red,
+            [Online] = Color.FromArgb( 0xFF, 0x47, 0xD8, 0x30 ),
+            [Idle] = Color.FromArgb( 0xFF, 0xFF, 0xDC, 0x00 ),
+            [Connecting] = Color.FromArgb( 0xFF, 0xDE, 0xA2, 0x00 )
+        };
+
         private readonly Thickness _bottom = new Thickness ( -1, -18, -1, -1 );
 
         private readonly RadialGradientBrush _chromeStroke = new RadialGradientBrush ( new GradientStopCollection {
-            new GradientStop(Colors.Black, 0.85),
-            new GradientStop(Color.FromArgb(0xFF, 0xC5, 0xC5, 0xC5), 1)
+            new GradientStop(Colours[ChromeEnd], ChromeOffsetX),
+            new GradientStop(Colours[Chrome], ChromeOffsetY)
         } );
 
         private readonly Thickness _floating = new Thickness ( 0, -18, 0, 0 );
 
         private readonly RadialGradientBrush _idle = new RadialGradientBrush ( new GradientStopCollection {
-            new GradientStop(Color.FromArgb(0x7F, 0x00, 0x00, 0x00), 1),
-            new GradientStop(Color.FromArgb(0xFF, 0xFF, 0xDC, 0x00), 0.15)
+            new GradientStop(Colours[Base], OffsetX),
+            new GradientStop(Colours[Idle], OffsetY)
         } );
 
         private readonly RadialGradientBrush _offline = new RadialGradientBrush ( new GradientStopCollection {
-            new GradientStop(Color.FromArgb(0x7F, 0x00, 0x00, 0x00), 1),
-            new GradientStop(Colors.Red, 0.15)
+            new GradientStop(Colours[Base], OffsetX),
+            new GradientStop(Colours[Offline], OffsetY)
         } );
 
         private readonly RadialGradientBrush _online = new RadialGradientBrush ( new GradientStopCollection {
-            new GradientStop(Color.FromArgb(0x7F, 0x00, 0x00, 0x00), 1),
-            new GradientStop(Color.FromArgb(0xFF, 0x47, 0xD8, 0x30), 0.15)
+            new GradientStop(Colours[Base], OffsetX),
+            new GradientStop(Colours[Online], OffsetY)
         } );
 
         private readonly RadialGradientBrush _connecting = new RadialGradientBrush ( new GradientStopCollection {
-            new GradientStop(Color.FromArgb(0x7F, 0x00, 0x00, 0x00), 1),
-            new GradientStop(Color.FromArgb(0xFF, 0xDE, 0xA2, 0x00), 0.15)
+            new GradientStop(Colours[Base], OffsetX),
+            new GradientStop(Colours[Connecting], OffsetY)
         } );
 
 
@@ -119,18 +143,15 @@ namespace DiscordSnipIntegration
             private Thickness _floating = new Thickness(0,-24,0,0);    Floating
 
         */
-        private void accent_MouseDown ( object sender, MouseButtonEventArgs e )
-        {
-            if ( Program.Settings.BarPosition == BarPosition.Floating )
+        private void accent_MouseDown ( object sender, MouseButtonEventArgs e ) {
+            if ( Program.Settings.BarPosition != BarPosition.Floating ) return;
+            try
             {
-                try
-                {
-                    DragMove ( );
-                }
-                catch ( Exception ) // Only when we "try" to move the window...
-                {
-                    // This is stupidly a null idea
-                }
+                DragMove ( );
+            }
+            catch ( Exception ) // Only when we "try" to move the window...
+            {
+                // This is stupidly a null idea
             }
         }
 
@@ -146,10 +167,7 @@ namespace DiscordSnipIntegration
             switch ( Program.Settings.BarPosition )
             {
                 case BarPosition.Floating:
-                    if ( Top < scPos )
-                        Program.Settings.BarPosition = BarPosition.Top;
-                    else
-                        Program.Settings.BarPosition = BarPosition.Bottom;
+                    Program.Settings.BarPosition = Top < scPos ? BarPosition.Top : BarPosition.Bottom;
                     break;
 
                 case BarPosition.Top:
@@ -191,15 +209,15 @@ namespace DiscordSnipIntegration
             // Height = o;
         }
 
-        internal void SetUser(string username)
+        internal void SetUser(string userName)
         {
             if ( !Dispatcher.CheckAccess ( ) )
             {
-                Dispatcher.Invoke ( new TUpdateHandler<string> ( SetUser ), username );
+                Dispatcher.Invoke ( new TUpdateHandler<string> ( SetUser ), userName );
                 return;
             }
-            if(this.username.Text != username)
-                this.username.Text = username;
+            if(username.Text != userName)
+                username.Text = userName;
         }
 
         internal void SetNowPlaying(string nowPlaying)
@@ -227,27 +245,28 @@ namespace DiscordSnipIntegration
                         WindowState = WindowState.Normal;
                         break;
                     }
+                case WindowState.Minimized:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException( );
             }
         }
 
         private void SysEventUserPrefsChanged ( object sender, Microsoft.Win32.UserPreferenceChangedEventArgs e )
         {
-            if ( e.Category == Microsoft.Win32.UserPreferenceCategory.General )
-            {
-                uint bkg = 0;
-                bool opaqueBlend;
-                Dwm.DwmGetColorizationColor ( out bkg, out opaqueBlend );
-                accent.BorderBrush = Unpack ( bkg );
-            }
+            if ( e.Category != Microsoft.Win32.UserPreferenceCategory.General ) return;
+            uint bkg;
+            bool opaqueBlend;
+            Dwm.DwmGetColorizationColor ( out bkg, out opaqueBlend );
+            accent.BorderBrush = Unpack ( bkg );
         }
 
-        private Brush Unpack ( uint bkg )
+        private static Brush Unpack ( uint bkg )
         {
-            byte a, r, g, b;
-            a = ( byte ) ( bkg >> 24 );
-            r = ( byte ) ( bkg >> 16 );
-            g = ( byte ) ( bkg >> 8 );
-            b = ( byte ) ( bkg );
+            byte a = ( byte ) ( bkg >> 24 );
+            byte r = ( byte ) ( bkg >> 16 );
+            byte g = ( byte ) ( bkg >> 8 );
+            byte b = ( byte ) ( bkg );
 
             return new SolidColorBrush ( Color.FromArgb ( a, r, g, b ) );
         }
@@ -259,17 +278,18 @@ namespace DiscordSnipIntegration
             Microsoft.Win32.SystemEvents.UserPreferenceChanged += SysEventUserPrefsChanged;
             IntPtr hWnd = new WindowInteropHelper ( this ).Handle;
             HwndSource src = HwndSource.FromHwnd ( hWnd );
-            uint bkg = 0;
+            uint bkg;
             bool opaqueBlend;
             Dwm.DwmGetColorizationColor ( out bkg, out opaqueBlend );
             accent.BorderBrush = Unpack ( bkg );
 
-            WindowBlurHelper wbh = new WindowBlurHelper ( hWnd );
+            var wbh = new WindowBlurHelper ( hWnd );
 
-            Dwm.MARGINS pMargins = new Dwm.MARGINS ( -1, -1, -1, -1 );
-            src.CompositionTarget.BackgroundColor = Color.FromArgb ( 0, 0, 0, 0 );
+            var pMargins = new Dwm.MARGINS ( -1, -1, -1, -1 );
+            if ( src?.CompositionTarget != null )
+                src.CompositionTarget.BackgroundColor = Color.FromArgb ( 0, 0, 0, 0 );
 
-            bool isComposite = false;
+            bool isComposite;
             Dwm.DwmIsCompositionEnabled ( out isComposite );
 
             if ( !isComposite )
@@ -280,13 +300,18 @@ namespace DiscordSnipIntegration
 
             // DwmEnableBlurBehindWindow ( hWnd, ref dbb );
         }
+
+        private void containerTestBtn_Click ( object sender, RoutedEventArgs e )
+        {
+            Notifier.SubError ( this, "I am testing this message container" ).PopUp ( NotifyPopupDirection.Down );
+        }
     }
 
     internal static class Extensions
     {
         public static byte [ ] ToByteArray ( this System.Drawing.Image imageIn )
         {
-            MemoryStream ms = new MemoryStream ( );
+            var ms = new MemoryStream ( );
             imageIn.Save ( ms, imageIn.RawFormat );
             return ms.ToArray ( );
         }

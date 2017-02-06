@@ -24,12 +24,10 @@ using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace DiscordSnipIntegration
-{
+namespace DiscordSnipIntegration {
     using static Global;
 
-    internal class Program
-    {
+    internal static class Program {
         /**
             Originally used into getting auth tokens,
             but the client would still get kicked off,
@@ -55,78 +53,84 @@ namespace DiscordSnipIntegration
         private static Settings settings;
         private static GlassBar bar;
         internal static Settings Settings => settings;
-        
+
         [STAThread]
-        public static void Main ( string [ ] args )
-        {
-            Trace.AllocConsole ( );
+        public static void Main( string[] args ) {
+            Trace.AllocConsole( );
 
-            Trace.SetTitle (AppFull);
-            LoadCritical ( );
-            DisplayHeader ( );
-            RunUpdates ( );
+            Trace.SetTitle( AppFull );
+            LoadCritical( );
+            DisplayHeader( );
+            RunUpdates( );
 
-            Trace.Info ( "Launching new GlassBar()" );
-            bar = new GlassBar ( );
-            bar.ShowDialog ( );
-            Trace.FreeConsole ( );
+            Trace.Info( "Launching new GlassBar()" );
+            bar = new GlassBar( );
+            bar.ShowDialog( );
+            Trace.FreeConsole( );
         }
 
-        private static void DisplayHeader ( )
-        {
-            Trace.WriteLine ( AppFull );
-            Trace.WriteLine ( AppCopy );
+        private static void DisplayHeader( ) {
+            Trace.WriteLine( AppFull );
+            Trace.WriteLine( AppCopy );
 
-            PrintWarningByCurrentRepo ( );
+            PrintWarningByCurrentRepo( );
 
-            Trace.WriteLine ( );
+            Trace.WriteLine( );
         }
 
-        private static void LoadCritical ( )
-        {
-            settings = Settings.Load ( );
-            Locale.LoadLocales ( settings.PreferredLocale );
+        private static void LoadCritical( ) {
+            settings = Settings.Load( );
+            Locale.LoadLocales( settings.PreferredLocale );
 
-            if ( Locale.localeGenerated )
-            {
+            if ( Locale.localeGenerated ) {
                 settings.PreferredLocale = Locale.LoadedLocale.LocaleName;
-                settings.AutoSave ( );
+                settings.AutoSave( );
             }
 
-            if ( Locale.LoadedLocale == null )
-            {
-                throw new NullReferenceException ( Locale.LocaleFail );
+            if ( Locale.LoadedLocale == null ) {
+                throw new NullReferenceException( Locale.LocaleFail );
             }
 
-            if ( !settings.AcceptEula )
-            {
-                if ( ( new Eula ( ) ).ShowDialog ( ) == System.Windows.Forms.DialogResult.OK )
-                {
-                    settings.AcceptEula = true;
-                    settings.AutoSave ( );
-                }
-            }
+            if ( settings.AcceptEula ) return;
+            if ( new Eula( ).ShowDialog( ) != System.Windows.Forms.DialogResult.OK ) return;
+            settings.AcceptEula = true;
+            settings.AutoSave( );
         }
 
-        private static void RunUpdates ( )
-        {
-            using ( TcpClient tc = new TcpClient ( ) )
-            {
-                string newVer = string.Empty;
-                using ( var w = new WebClient ( ) )
-                {
-                    w.CachePolicy = new System.Net.Cache.RequestCachePolicy ( System.Net.Cache.RequestCacheLevel.NoCacheNoStore );
-                    newVer = w.DownloadString ( $"{PROJECTURL}/LATEST" );
+        private static void RunUpdates( ) {
+            using ( var tc = new TcpClient( ) ) {
+                try {
+                    string newVer;
+                    string pth;
+                    string dPth;
+                    using ( var w = new WebClient( ) ) {
+                        w.CachePolicy =
+                            new System.Net.Cache.RequestCachePolicy( System.Net.Cache.RequestCacheLevel.NoCacheNoStore );
+                        try {
+                            pth = PROJECTURL;
+                            dPth = $"{pth}/LATEST";
+                            Trace.__verbose( $"File: {dPth}" );
+                            newVer = w.DownloadString( dPth );
+
+                        } catch (Exception) {
+                            pth = PROJECTURL_ALT;
+                            dPth = $"{pth}/LATEST";
+                            Trace.__verbose ( $"File: {dPth}" );
+                            newVer = w.DownloadString( dPth );
+                        }
+                    }
+
+                    ToasterVersion nv = ToasterVersion.Parse( newVer );
+
+                    if ( nv <= Global.Version ) return;
+                    Trace.WriteLine( Locale.LoadedLocale.UpdateAvailableString );
+                    Trace.PrintLine("FILE_TO_DOWNLOAD", $"{pth}/{nv.Filename}");
+                    Process.Start( $"{pth}/{nv.Filename}" );
+                    Trace.WriteLine( Locale.LoadedLocale.PressAnyKeyString );
+                    Trace.ReadKey( true );
                 }
-
-                ToasterVersion nv = ToasterVersion.Parse ( newVer );
-
-                if ( nv > version )
-                {
-                    Trace.WriteLine ( Locale.LoadedLocale.UpdateAvailableString );
-                    Process.Start ( $"{PROJECTURL}/{nv.Filename}" );
-                    Trace.WriteLine ( Locale.LoadedLocale.PressAnyKeyString );
-                    Trace.ReadKey ( true );
+                catch ( Exception ex ) {
+                    Trace.Error( ex.Message );
                 }
             }
         }

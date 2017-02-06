@@ -27,36 +27,30 @@ namespace Winter
     public static class SpotifyNowPlaying
     {
         [STAThread]
-        public static void SnipInit()
+        public static bool SnipInit()
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-
-            bool isNewProcess = false;
 
             Mutex mutex = null;
 
             try
             {
-                mutex = new Mutex(true, Application.ProductName, out isNewProcess);
+                bool isNewProcess;
+                mutex = new Mutex( true, DiscordSnipIntegration.Global.SNIP, out isNewProcess );
 
-                if (isNewProcess)
-                {
-                    Application.Run(new Snip());
-                    mutex.ReleaseMutex();
-                }
+                if ( !isNewProcess ) return false;
+                Application.Run(new Snip());
+                mutex.ReleaseMutex();
                 // else
                 // {
                 //     MessageBox.Show("Another instance of " + Application.ProductName + " is already running.", Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 // }
             }
-            finally
-            {
-                if (mutex != null)
-                {
-                    mutex.Close();
-                }
+            finally {
+                mutex?.Close();
             }
+            return true;
         }
     }
 }

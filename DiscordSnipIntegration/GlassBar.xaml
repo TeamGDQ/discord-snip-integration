@@ -19,6 +19,7 @@
         </TextBlock>
 
         <Button x:Name="closeBtn" Content="" HorizontalAlignment="Right" Margin="0,-18,0,-1" Width="30" BorderBrush="#0C707070" Background="#FF890000" Click="closeBtn_Click" />
+        <Button x:Name="containerTestBtn" Content="" HorizontalAlignment="Right" Margin="0,-18,80,-1" Width="30" BorderBrush="#0C707070" Background="#FF328900" Click="containerTestBtn_Click" />
         <Button x:Name="dockBtn" Content="" HorizontalAlignment="Right" Margin="0,-18,29,-1" Width="30" BorderBrush="#0C707070" Background="#FF4070A0" Click ="dockBtn_Click"/>
         <Ellipse x:Name="connectionStatus" HorizontalAlignment="Right" Height="16" Margin="0,-17,64,0" VerticalAlignment="Top" Width="16">
             <Ellipse.Stroke>
