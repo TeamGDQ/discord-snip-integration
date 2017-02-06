@@ -11,4 +11,7 @@ My binaries for this application are my personal builds, to ensure they are 100%
 
 Currently there's an internal updater which is nice and all, and it doesn't take up much lines, but I do feel that it can be improved.
 
+##Webhooking to Discord
+**This Project is now hooked into my Discord! Any Developer who wants to get notified when I or someone else commits, please let me know!**
+
 Any ***Issues*** with the program, or compiling on your end, please submit an issue and I or someone else will jump on it. I'm not that kind of prick that doesn't answer to the community. I love you all! :D
